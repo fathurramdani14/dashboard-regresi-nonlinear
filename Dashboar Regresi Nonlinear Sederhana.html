@@ -1,0 +1,257 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Aplikasi Regresi</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f3f4f5;--card:#fff;--ink:#1d2329;--mute:#5d6873;--line:#d9dde1;--dot:#8a949d;--ok:#2f7d4f;--warn:#a5670d;
+--c1:#1f5f8b;--c2:#c2412d;--c3:#7a4fa3;--c4:#1f9d8a;--c5:#c99a1f;--c6:#3f7d3a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15191d;--card:#1e242a;--ink:#e7eaed;--mute:#9aa5af;--line:#333c45;--dot:#7d8791;--ok:#7bc39a;--warn:#e0ac52;
+--c1:#6fb0dd;--c2:#f0836f;--c3:#c9a4e6;--c4:#5fd6c4;--c5:#e6c35f;--c6:#8fce89}}
+:root[data-theme="dark"]{--bg:#15191d;--card:#1e242a;--ink:#e7eaed;--mute:#9aa5af;--line:#333c45;--dot:#7d8791;--ok:#7bc39a;--warn:#e0ac52;
+--c1:#6fb0dd;--c2:#f0836f;--c3:#c9a4e6;--c4:#5fd6c4;--c5:#e6c35f;--c6:#8fce89}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:20px 20px 0;max-width:1080px;margin:auto}h1{font:600 21px/1.3 "IBM Plex Sans",system-ui,sans-serif;margin:0 0 4px}
+header p.sub{margin:2px 0 8px;color:var(--mute);max-width:76ch}header p.meta{margin:0;color:var(--mute);font-size:12.5px}
+nav{display:flex;gap:6px;max-width:1080px;margin:16px auto 0;padding:0 20px 0}
+nav button{flex:1;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);padding:10px 12px;font:inherit;color:var(--mute);cursor:pointer;border-radius:8px 8px 0 0;border-bottom:0}
+nav button b.n{width:20px;height:20px;border-radius:50%;background:var(--line);color:var(--card);display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+nav button[aria-selected=true]{color:var(--ink);font-weight:600}nav button[aria-selected=true] b.n{background:var(--c1);color:#fff}
+main{max-width:1080px;margin:auto;padding:0 20px 40px;border-top:1px solid var(--line)}section{display:none;padding-top:16px}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:14px}.card h2{font-size:16px;margin:0 0 4px}.card .sub{color:var(--mute);margin:0 0 10px;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}@media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px}.kpi b{display:block;font-size:20px}.kpi span{font-size:12px;color:var(--mute)}
+svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11px}
+.tw{overflow-x:auto;max-height:320px;overflow-y:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:5px 7px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--mute);font-weight:600;position:sticky;top:0;background:var(--card)}
+tr.best td{font-weight:600;color:var(--ok)}
+input.cell{width:70px;padding:3px 5px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit;font-size:12.5px;text-align:right}
+.rowbtn{border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:4px;cursor:pointer;font-size:12px;padding:2px 7px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;cursor:pointer;font:inherit;font-size:13px;padding:6px 12px}.btn.primary{background:var(--c1);color:#fff;border-color:var(--c1)}
+.numin{width:78px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+select{padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit}
+.chk{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:13px}
+.chk input{accent-color:var(--c1)}.chk b.sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+.note{font-size:13px;color:var(--mute)}.warn{font-size:13px;color:var(--warn)}
+.lg{display:flex;gap:14px;font-size:12px;color:var(--mute);margin-top:4px;flex-wrap:wrap}.lg i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+footer{max-width:1080px;margin:0 auto 30px;padding:0 20px;color:var(--mute);font-size:12px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+</style></head><body>
+<header><h1>Aplikasi Regresi</h1>
+<p class="sub">Eksplorasi data, pencocokan model non-linear (least squares Levenberg–Marquardt), diagnostik residual, dan prediksi interaktif dengan perbandingan antar model. Semua angka dapat diedit atau diganti dengan data Anda sendiri.</p>
+<p class="meta" id="meta"></p></header>
+<nav role="tablist">
+<button role="tab" aria-selected="true" data-t="t1"><b class="n">1</b>Data &amp; EDA</button>
+<button role="tab" aria-selected="false" data-t="t2"><b class="n">2</b>Model &amp; Diagnostik</button>
+<button role="tab" aria-selected="false" data-t="t3"><b class="n">3</b>Prediksi &amp; Benchmark</button></nav>
+<main>
+<section id="t1" class="on">
+<div class="card"><h2>Sumber data</h2>
+<div class="toolbar">
+<select id="dsSel">
+<option value="concrete">Kuat tekan beton vs umur (logaritmik) — bawaan</option>
+<option value="logi">Pertumbuhan kasus kumulatif (logistik)</option>
+<option value="expo">Depresiasi nilai aset (eksponensial)</option>
+<option value="powr">Rata-rata klaim vs usia tertanggung (power)</option>
+<option value="gaus">Curah hujan musiman (gaussian)</option>
+</select>
+<label class="btn" style="cursor:pointer">Unggah CSV (X,Y)<input type="file" id="csv" accept=".csv,.txt" style="display:none"></label>
+<button class="btn" id="reset">Reset dataset ini</button>
+</div><div class="warn" id="warnmsg" style="display:none"></div>
+</div>
+<div class="kpis" id="k1"></div>
+<div class="card"><h2>Sebar X vs Y</h2><svg id="c1" viewBox="0 0 640 300"></svg></div>
+<div class="card"><h2>Data (dapat diedit)</h2><p class="sub" id="pv-note"></p>
+<div class="toolbar"><button class="btn primary" id="addrow">+ Tambah baris</button></div>
+<div class="tw"><table id="tpv"></table></div></div>
+</section>
+<section id="t2">
+<div class="card"><h2>Pilih bentuk model</h2>
+<div class="toolbar" id="modelChecks"></div>
+<button class="btn primary" id="fitBtn">Cocokkan model</button>
+</div>
+<div class="card"><h2>Data teramati dan kurva model terpasang</h2><svg id="c2" viewBox="0 0 640 320"></svg><div class="lg" id="legend2"></div></div>
+<div class="card"><h2>Diagnostik model</h2><div class="toolbar"><label class="note">Tampilkan diagnostik untuk: <select id="diagSel"></select></label></div>
+<div class="tw"><table id="tb2"></table></div>
+<div class="grid" style="margin-top:12px"><div><p class="sub" id="res-note"></p><svg id="c3" viewBox="0 0 640 260"></svg></div>
+<div class="tw"><table id="tb3"></table></div></div></div>
+</section>
+<section id="t3">
+<div class="card"><h2>Tabel benchmark</h2><p class="sub">Diurutkan berdasarkan R² (semakin tinggi semakin baik). AIC/BIC lebih rendah menandakan keseimbangan kecocokan-kompleksitas yang lebih baik.</p><div class="tw"><table id="tb4"></table></div></div>
+<div class="card"><h2>Perbandingan R² antar model</h2><svg id="c4" viewBox="0 0 640 220"></svg></div>
+<div class="card"><h2>Prediksi interaktif</h2><div class="toolbar"><label class="note">X: <input type="number" class="numin" id="xnum" value="0"></label><input id="xrange" type="range" style="flex:1;min-width:160px"></div>
+<svg id="c6" viewBox="0 0 640 300"></svg><div class="lg" id="legend6"></div>
+<div class="tw" style="margin-top:10px"><table id="tbpred"></table></div>
+</div>
+</section>
+</main>
+<footer>Aplikasi regresi non-linear umum — dibangun untuk eksplorasi berbagai bentuk model (logistik, eksponensial, power, gaussian, logaritmik, linear). Dataset bawaan bersifat ilustratif/sintetis, kecuali data beton (UCI Machine Learning Repository).</footer>
+<script>
+const SAMPLES={"concrete":[[28,79.99],[28,61.89],[270,40.27],[365,41.05],[360,44.3],[90,47.03],[365,43.7],[28,36.45],[28,45.85],[28,39.29],[90,38.07],[28,28.02],[270,43.01],[90,42.33],[28,47.81],[90,52.91],[90,39.36],[365,56.14],[90,40.56],[180,42.62],[180,41.84],[28,28.24],[3,8.06],[180,44.21],[365,52.52],[270,53.3],[270,41.15],[180,52.12],[28,37.43],[7,38.6],[365,55.26],[365,52.91],[180,41.72],[270,42.13],[365,53.69],[270,38.41],[28,30.08],[90,37.72],[90,42.23],[180,36.25],[90,50.46],[365,43.7],[365,39.0],[180,53.1],[90,41.54],[7,35.08],[3,15.05],[180,40.76],[7,26.26],[7,32.82],[180,39.78],[180,46.93],[90,33.12],[90,49.19],[7,14.59],[7,14.64],[365,41.93],[3,9.13],[180,50.95],[28,33.02],[270,54.38],[270,51.73],[3,9.87],[270,50.66],[180,48.7],[270,55.06],[360,44.7],[7,30.28],[28,40.86],[28,71.99],[3,34.4],[3,28.8],[3,33.4],[3,36.3],[3,29.0],[3,37.8],[3,40.2],[3,33.4],[3,28.1],[3,41.3],[3,33.4],[3,25.2],[3,41.1],[3,35.3],[3,28.3],[3,28.6],[3,35.3],[3,24.4],[3,35.3],[3,39.3],[3,40.6],[3,35.3],[3,24.1],[7,46.2],[7,42.8],[7,49.2],[7,46.8],[7,45.7],[7,55.6],[7,54.9],[7,49.2],[7,34.9],[7,46.9],[7,49.2],[7,33.4],[7,54.1],[7,55.9],[7,49.8],[7,47.1],[7,55.9],[7,38.0],[7,55.9],[7,56.1],[7,59.09],[7,22.9],[7,35.1],[28,61.09],[28,59.8],[28,60.29],[28,61.8],[28,56.7],[28,68.3],[28,66.9],[28,60.29],[28,50.7],[28,56.4],[28,60.29],[28,55.5],[28,68.5],[28,71.3],[28,74.7],[28,52.2],[28,71.3],[28,67.7],[28,71.3],[28,66.0],[28,74.5],[28,71.3],[28,49.9],[56,63.4],[56,64.9],[56,64.3],[56,64.9],[56,60.2],[56,72.3],[56,69.3],[56,64.3],[56,55.2],[56,58.8],[56,64.3],[56,66.1],[56,73.7],[56,77.3],[56,80.2],[56,54.9],[56,77.3],[56,72.99],[56,77.3],[56,71.7],[56,79.4],[56,77.3],[56,59.89],[91,64.9],[91,66.6],[91,65.2],[91,66.7],[91,62.5],[91,74.19],[91,70.7],[91,65.2],[91,57.6],[91,59.2],[91,65.2],[91,68.1],[91,75.5],[91,79.3],[91,56.5],[91,79.3],[91,76.8],[91,79.3],[91,73.3],[91,82.6],[91,79.3],[91,67.8],[3,11.58],[14,24.45],[28,24.89],[56,29.45],[100,40.71],[3,10.38],[14,22.14],[28,22.84],[56,27.66],[100,34.56],[3,12.45],[14,24.99],[28,25.72],[56,33.96],[100,37.34],[3,15.04],[14,21.06],[28,26.4],[56,35.34],[100,40.57],[3,12.47],[14,20.92],[28,24.9],[56,34.2],[100,39.61],[3,10.03],[14,20.08],[28,24.48],[56,31.54],[100,35.34],[3,9.45],[14,22.72],[28,28.47],[56,38.56],[100,40.39],[3,10.76],[14,25.48],[28,21.54],[56,28.63],[100,33.54],[3,7.75],[14,17.82],[28,24.24],[56,32.85],[100,39.23],[3,18.0],[14,30.39],[28,45.71],[56,50.77],[100,53.9],[3,13.18],[14,17.84],[28,40.23],[56,47.13],[100,49.97],[3,13.36],[14,22.32],[28,24.54],[56,31.35],[100,40.86],[3,19.93],[14,25.69],[28,30.23],[56,39.59],[100,44.3],[3,13.82],[14,24.92],[28,29.22],[56,38.33],[100,42.35],[3,13.54],[14,26.31],[28,31.64],[56,42.55],[100,42.92],[3,13.33],[14,25.37],[28,37.4],[56,44.4],[100,47.74],[3,19.52],[14,31.35],[28,38.5],[56,45.08],[100,47.82],[3,15.44],[14,26.77],[28,33.73],[56,42.7],[100,45.84],[3,17.22],[14,29.93],[28,29.65],[56,36.97],[100,43.58],[3,13.12],[14,24.43],[28,32.66],[56,36.64],[100,44.21],[3,13.62],[14,21.6],[28,27.77],[56,35.57],[100,45.37],[3,7.32],[14,21.5],[28,31.27],[56,43.5],[100,48.67],[3,7.4],[14,23.51],[28,31.12],[56,39.15],[100,48.15],[3,22.5],[14,34.67],[28,34.74],[56,45.08],[100,48.97],[3,23.14],[14,41.89],[28,48.28],[56,51.04],[100,55.64],[3,22.95],[14,35.23],[28,39.94],[56,48.72],[100,52.04],[3,21.02],[14,33.36],[28,33.94],[56,44.14],[100,45.37],[3,15.36],[14,28.68],[28,30.85],[56,42.03],[100,51.06],[3,21.78],[14,42.29],[28,50.6],[56,55.83],[100,60.95],[3,23.52],[14,42.22],[28,52.5],[56,60.32],[100,66.42],[3,23.8],[14,38.77],[28,51.33],[56,56.85],[100,58.61],[3,21.91],[14,36.99],[28,47.4],[56,51.96],[100,56.74],[3,17.57],[14,33.73],[28,40.15],[56,46.64],[100,50.08],[3,17.37],[14,33.7],[28,45.94],[56,51.43],[100,59.3],[3,30.45],[14,47.71],[28,63.14],[56,66.82],[100,66.95],[3,27.42],[14,35.96],[28,55.51],[56,61.99],[100,63.53],[3,18.02],[14,38.6],[28,52.2],[56,53.96],[100,56.63],[3,15.34],[14,26.05],[28,30.22],[56,37.27],[100,46.23],[3,16.28],[14,25.62],[28,31.97],[56,36.3],[100,43.06],[28,67.57],[28,57.23],[28,81.75],[28,64.02],[28,78.8],[28,41.37],[28,60.28],[28,56.83],[28,51.02],[28,55.55],[28,44.13],[28,39.38],[28,55.65],[28,47.28],[28,44.33],[28,52.3],[28,49.25],[28,41.37],[28,29.16],[28,39.4],[28,39.3],[28,67.87],[28,58.52],[28,53.58],[28,59.0],[28,76.24],[28,69.84],[3,14.4],[3,19.42],[3,20.73],[3,14.94],[3,21.29],[3,23.08],[3,15.52],[3,15.82],[3,12.55],[3,8.49],[3,15.61],[3,12.18],[3,11.98],[14,16.88],[14,33.09],[14,34.24],[14,31.81],[14,29.75],[14,33.01],[14,32.9],[14,29.55],[14,19.42],[14,24.66],[14,29.59],[14,24.28],[14,20.73],[28,26.2],[28,46.39],[28,39.16],[28,41.2],[28,33.69],[28,38.2],[28,41.41],[28,37.81],[28,24.85],[28,27.22],[28,44.64],[28,37.27],[28,33.27],[56,36.56],[56,53.72],[56,48.59],[56,51.72],[56,35.85],[56,53.77],[56,53.46],[56,48.99],[56,31.72],[56,39.64],[56,51.26],[56,43.39],[56,39.27],[100,37.96],[100,55.02],[100,49.99],[100,53.66],[100,37.68],[100,56.06],[100,56.81],[100,50.94],[100,33.56],[100,41.16],[100,52.96],[100,44.28],[100,40.15],[28,57.03],[28,44.42],[28,51.02],[28,53.39],[3,35.36],[3,25.02],[3,23.35],[7,52.01],[7,38.02],[7,39.3],[56,61.07],[56,56.14],[56,55.25],[56,54.77],[28,50.24],[28,46.68],[28,46.68],[3,22.75],[3,25.51],[3,34.77],[7,36.84],[7,45.9],[7,41.67],[56,56.34],[56,47.97],[56,61.46],[28,44.03],[28,55.45],[28,55.55],[28,57.92],[3,25.61],[7,33.49],[56,59.59],[3,29.55],[7,37.92],[56,61.86],[28,62.05],[3,32.01],[28,72.1],[7,39.0],[56,65.7],[3,32.11],[7,40.29],[56,74.36],[28,21.97],[3,9.85],[7,15.07],[56,23.25],[28,43.73],[3,13.4],[7,24.13],[56,44.52],[28,62.94],[28,59.49],[3,25.12],[3,23.64],[7,35.75],[7,38.61],[56,68.75],[56,66.78],[28,23.85],[90,32.07],[3,11.65],[3,19.2],[90,48.85],[28,39.6],[28,43.94],[7,34.57],[90,54.32],[3,24.4],[3,15.62],[90,21.86],[7,10.22],[7,14.6],[28,18.75],[28,31.97],[7,23.4],[28,25.57],[90,41.68],[7,27.74],[3,8.2],[7,9.62],[7,25.42],[7,15.69],[28,27.94],[28,32.63],[7,17.24],[7,19.77],[28,39.44],[28,25.75],[28,33.08],[7,24.07],[7,21.82],[28,21.07],[7,14.84],[28,32.05],[7,11.96],[7,25.45],[28,22.49],[28,25.22],[28,39.7],[7,13.09],[28,38.7],[7,7.51],[28,17.58],[7,21.18],[28,18.2],[7,17.2],[28,22.63],[7,21.86],[7,12.37],[28,25.73],[28,37.81],[7,21.92],[28,33.04],[7,14.54],[28,26.91],[7,8.0],[28,31.9],[7,10.34],[28,19.77],[28,37.44],[7,11.48],[7,24.44],[28,17.6],[7,10.73],[28,31.38],[3,13.22],[7,20.97],[14,27.04],[28,32.04],[90,35.17],[180,36.45],[365,38.89],[3,6.47],[14,12.84],[28,18.42],[90,21.95],[180,24.1],[365,25.08],[14,21.26],[28,25.97],[3,11.36],[90,31.25],[180,32.33],[360,33.7],[3,9.31],[90,26.94],[180,27.63],[365,29.79],[180,34.49],[365,36.15],[3,12.54],[28,27.53],[90,32.92],[7,9.99],[7,7.84],[28,12.25],[7,11.17],[28,17.34],[7,17.54],[28,30.57],[7,14.2],[28,24.5],[7,15.58],[28,26.85],[7,26.06],[28,38.21],[28,43.7],[7,30.14],[7,12.73],[28,20.87],[7,20.28],[28,34.29],[7,19.54],[90,47.71],[90,43.38],[28,29.89],[3,6.9],[90,33.19],[3,4.9],[3,4.57],[90,25.46],[28,24.29],[28,33.95],[3,11.41],[28,20.59],[7,25.89],[90,29.23],[90,31.02],[7,10.39],[28,33.66],[28,27.87],[7,19.35],[7,11.39],[3,12.79],[28,39.32],[3,4.78],[3,16.11],[28,43.38],[7,20.42],[3,6.94],[7,15.03],[3,13.57],[90,32.53],[7,15.75],[7,7.68],[28,38.8],[28,33.0],[28,17.28],[28,24.28],[28,24.05],[90,36.59],[90,50.73],[7,13.66],[3,14.14],[90,47.78],[3,2.33],[7,16.89],[7,23.52],[3,6.81],[90,39.7],[28,17.96],[28,32.88],[28,22.35],[7,10.79],[7,7.72],[28,41.68],[3,9.56],[3,6.88],[90,50.53],[7,17.17],[28,30.44],[3,9.73],[3,3.32],[90,26.32],[90,43.25],[3,6.28],[90,32.1],[28,36.96],[90,54.6],[7,21.48],[3,9.69],[7,8.37],[90,39.66],[7,10.09],[3,4.83],[7,10.35],[90,43.57],[90,51.86],[3,11.85],[7,17.24],[28,27.83],[90,35.76],[120,38.7],[3,14.31],[7,17.44],[28,31.74],[90,37.91],[120,39.38],[3,15.87],[7,9.01],[28,33.61],[90,40.66],[120,40.86],[7,12.05],[28,17.54],[7,18.91],[28,25.18],[7,30.96],[28,43.89],[90,54.28],[28,36.94],[7,14.5],[28,22.44],[1,12.64],[3,26.06],[7,33.21],[14,36.94],[28,44.09],[7,52.61],[14,59.76],[28,67.31],[90,69.66],[180,71.62],[270,74.17],[7,18.13],[14,22.53],[28,27.34],[56,29.98],[90,31.35],[180,32.72],[1,6.27],[3,14.7],[7,23.22],[14,27.92],[28,31.35],[180,39.0],[360,41.24],[3,14.99],[3,13.52],[7,24.0],[28,37.42],[7,11.47],[28,22.44],[7,21.16],[28,31.84],[7,14.8],[28,25.18],[28,17.54],[7,14.2],[28,21.65],[90,29.39],[3,13.52],[7,16.26],[28,31.45],[90,37.23],[7,18.13],[28,32.72],[90,39.49],[180,41.05],[360,42.13],[14,18.13],[180,26.74],[180,61.92],[90,47.22],[180,51.04],[270,55.16],[3,41.64],[7,13.71],[28,19.69],[28,31.65],[3,19.11],[28,39.58],[90,48.79],[7,24.0],[28,37.42],[7,11.47],[28,19.69],[7,14.99],[28,27.92],[90,34.68],[180,37.33],[360,38.11],[3,33.8],[7,42.42],[14,48.4],[28,55.94],[90,58.78],[270,67.11],[14,20.77],[28,25.18],[180,29.59],[28,21.75],[28,39.09],[3,24.39],[7,50.51],[28,74.99],[28,37.17],[28,33.76],[28,16.5],[28,19.99],[28,36.35],[28,33.69],[28,15.42],[28,33.42],[28,39.05],[28,27.68],[28,26.86],[28,45.3],[28,30.12],[28,15.57],[28,44.61],[28,53.52],[28,57.21],[28,65.91],[28,52.82],[28,33.4],[28,18.03],[28,37.36],[28,32.84],[28,42.64],[28,40.06],[28,41.94],[28,61.23],[28,40.87],[28,33.3],[28,52.42],[28,15.09],[28,38.46],[28,37.26],[28,35.23],[28,42.13],[28,31.87],[28,41.54],[28,39.45],[28,37.91],[28,44.28],[28,31.18],[28,23.69],[28,32.76],[28,32.4],[28,28.63],[28,36.8],[28,18.28],[28,33.06],[28,31.42],[28,31.03],[28,44.39],[28,12.18],[28,25.56],[28,36.44],[28,32.96],[28,23.84],[28,26.23],[28,17.95],[28,40.68],[28,19.01],[28,33.72],[28,8.54],[28,13.46],[28,32.24],[28,23.52],[28,29.72],[28,49.77],[28,52.44],[28,40.93],[28,44.86],[28,13.2],[28,37.43],[28,29.87],[28,56.61],[28,12.46],[28,23.79],[28,13.29],[28,39.42],[28,46.23],[28,44.52],[28,23.74],[28,26.14],[28,15.52],[28,43.57],[28,35.86],[28,41.05],[28,28.99],[28,46.24],[28,26.92],[28,10.54],[28,25.1],[28,29.07],[28,9.74],[28,33.8],[28,39.84],[28,26.97],[28,27.23],[28,30.65],[28,33.05],[28,24.58],[28,21.91],[28,30.88],[28,15.34],[28,24.34],[28,23.89],[28,22.93],[28,29.41],[28,28.63],[28,36.8],[28,18.29],[28,32.72],[28,31.42],[28,28.94],[28,40.93],[28,12.18],[28,25.56],[28,36.44],[28,32.96],[28,23.84],[28,26.23],[28,17.96],[28,38.63],[28,19.01],[28,33.72],[28,8.54],[28,13.46],[28,32.25],[28,23.52],[28,29.73],[28,49.77],[28,52.45],[28,40.93],[28,44.87],[28,13.2],[28,37.43],[28,29.87],[28,56.62],[28,12.46],[28,23.79],[28,13.29],[28,39.42],[28,46.23],[28,44.52],[28,23.74],[28,26.15],[28,15.53],[28,43.58],[28,35.87],[28,41.05],[28,28.99],[28,46.25],[28,26.92],[28,10.54],[28,25.1],[28,29.07],[28,9.74],[28,33.8],[28,37.17],[28,33.76],[28,16.5],[28,19.99],[28,36.35],[28,38.22],[28,15.42],[28,33.42],[28,39.06],[28,27.68],[28,26.86],[28,45.3],[28,30.12],[28,15.57],[28,44.61],[28,53.52],[28,57.22],[28,65.91],[28,52.83],[28,33.4],[28,18.03],[28,37.36],[28,35.31],[28,42.64],[28,40.06],[28,43.8],[28,61.24],[28,40.87],[28,33.31],[28,52.43],[28,15.09],[28,38.46],[28,37.27],[28,35.23],[28,42.14],[28,31.88],[28,41.54],[28,39.46],[28,37.92],[28,44.28],[28,31.18],[28,23.7],[28,32.77],[28,32.4]],"logi":[[0,1.7],[1,4.8],[2,0.2],[3,0.0],[4,0.0],[5,0.0],[6,6.8],[7,19.9],[8,5.3],[9,6.5],[10,19.4],[11,21.7],[12,23.8],[13,19.8],[14,34.4],[15,48.7],[16,39.8],[17,59.0],[18,59.2],[19,80.2],[20,93.0],[21,127.7],[22,141.0],[23,179.6],[24,205.1],[25,229.8],[26,237.3],[27,283.6],[28,315.9],[29,343.8],[30,353.8],[31,385.8],[32,401.6],[33,420.9],[34,453.2],[35,449.6],[36,467.8],[37,485.5],[38,480.1],[39,490.8],[40,498.1],[41,502.1],[42,494.0],[43,508.6],[44,522.5],[45,498.2],[46,521.4],[47,516.0],[48,510.1],[49,534.7],[50,524.2],[51,507.1],[52,519.0],[53,523.8],[54,517.2],[55,525.3],[56,518.7],[57,525.4],[58,532.5],[59,513.6]],"expo":[[1,127.1],[2,105.6],[3,90.4],[4,73.0],[5,62.7],[6,53.6],[7,47.9],[8,41.4],[9,29.2],[10,25.4],[11,24.7],[12,14.5],[13,15.3],[14,13.6],[15,14.9]],"powr":[[18,7.0],[19,7.4],[20,8.2],[21,9.1],[22,11.1],[23,10.9],[24,11.9],[25,13.5],[26,14.2],[27,15.3],[28,15.6],[29,17.9],[30,18.7],[31,22.0],[32,22.8],[33,23.3],[34,25.8],[35,25.8],[36,29.7],[37,29.5],[38,32.3],[39,30.3],[40,35.4],[41,32.7],[42,33.6],[43,39.4],[44,39.8],[45,44.5],[46,52.3],[47,45.8],[48,48.4],[49,53.1],[50,56.3],[51,56.4],[52,58.6],[53,64.3],[54,66.1],[55,62.4],[56,68.7],[57,71.7],[58,69.5],[59,78.0],[60,75.4],[61,87.1],[62,86.0],[63,88.4],[64,87.6],[65,93.0],[66,85.1],[67,92.9],[68,105.0],[69,92.4],[70,114.6],[71,100.5],[72,120.8],[73,112.8],[74,127.9],[75,126.6]],"gaus":[[1,292.9],[2,345.4],[3,335.0],[4,274.7],[5,209.3],[6,149.8],[7,97.2],[8,88.1],[9,59.3],[10,57.6],[11,48.8],[12,49.6]]};
+const MODELS={
+ linear:{label:"Linear",color:"--c1",params:["b0","b1"],domain:p=>true,
+  fn:(x,p)=>p[0]+p[1]*x,
+  init:(x,y)=>{const mx=mean(x),my=mean(y);let sxy=0,sxx=0;for(let i=0;i<x.length;i++){sxy+=(x[i]-mx)*(y[i]-my);sxx+=(x[i]-mx)**2}const b1=sxy/(sxx||1e-9);return[my-b1*mx,b1]}},
+ log:{label:"Logaritmik",color:"--c2",params:["b0","b1"],domain:x=>x.every(v=>v>0),
+  fn:(x,p)=>p[0]+p[1]*Math.log(x),
+  init:(x,y)=>{const L=x.map(Math.log),mx=mean(L),my=mean(y);let sxy=0,sxx=0;for(let i=0;i<L.length;i++){sxy+=(L[i]-mx)*(y[i]-my);sxx+=(L[i]-mx)**2}const b1=sxy/(sxx||1e-9);return[my-b1*mx,b1]}},
+ exp:{label:"Eksponensial",color:"--c3",params:["a","b"],domain:x=>true,
+  fn:(x,p)=>p[0]*Math.exp(p[1]*x),
+  init:(x,y)=>{if(y.every(v=>v>0)){const L=y.map(Math.log),mx=mean(x),my=mean(L);let sxy=0,sxx=0;for(let i=0;i<x.length;i++){sxy+=(x[i]-mx)*(L[i]-my);sxx+=(x[i]-mx)**2}const b=sxy/(sxx||1e-9);return[Math.exp(my-b*mx),b]}return[mean(y)||1,0.01]}},
+ power:{label:"Power",color:"--c4",params:["a","b"],domain:(x,y)=>x.every(v=>v>0)&&y.every(v=>v>0),
+  fn:(x,p)=>p[0]*Math.pow(x,p[1]),
+  init:(x,y)=>{const LX=x.map(Math.log),LY=y.map(Math.log),mx=mean(LX),my=mean(LY);let sxy=0,sxx=0;for(let i=0;i<x.length;i++){sxy+=(LX[i]-mx)*(LY[i]-my);sxx+=(LX[i]-mx)**2}const b=sxy/(sxx||1e-9);return[Math.exp(my-b*mx),b]}},
+ logistic:{label:"Logistik",color:"--c5",params:["L","k","x0"],domain:x=>true,
+  fn:(x,p)=>p[0]/(1+Math.exp(-p[1]*(x-p[2]))),
+  init:(x,y)=>{const ymax=Math.max(...y),xr=Math.max(...x)-Math.min(...x)||1;return[ymax*1.08||1,4/xr,median(x)]}},
+ gaussian:{label:"Gaussian",color:"--c6",params:["a","mu","sigma"],domain:x=>true,
+  fn:(x,p)=>p[0]*Math.exp(-((x-p[1])**2)/(2*p[2]*p[2])),
+  init:(x,y)=>{let bi=0;for(let i=1;i<y.length;i++)if(y[i]>y[bi])bi=i;const sig=(Math.max(...x)-Math.min(...x))/4||1;return[y[bi]||1,x[bi],sig]}}
+};
+let DS="concrete", X=[], Yv=[];
+function loadDS(k){DS=k;const d=SAMPLES[k];X=d.map(p=>p[0]);Yv=d.map(p=>p[1])}
+loadDS("concrete");
+const f=(x,d=2)=>Number.isFinite(x)?Number(x).toLocaleString("id-ID",{minimumFractionDigits:d,maximumFractionDigits:d}):"—";
+const cs=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const $=id=>document.getElementById(id);
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+function median(a){const s=[...a].sort((x,y)=>x-y),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2}
+function erf(x){const s=x<0?-1:1;x=Math.abs(x);const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911;
+const t=1/(1+p*x);const y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y}
+const normCDF=z=>0.5*(1+erf(z/Math.SQRT2));
+function solveLinear(A,b){const n=b.length,M=A.map((r,i)=>[...r,b[i]]);
+for(let c=0;c<n;c++){let piv=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[piv][c]))piv=r;[M[c],M[piv]]=[M[piv],M[c]];
+const d=M[c][c]||1e-12;for(let j=c;j<=n;j++)M[c][j]/=d;
+for(let r=0;r<n;r++)if(r!=c){const f2=M[r][c];for(let j=c;j<=n;j++)M[r][j]-=f2*M[c][j]}}
+return M.map(r=>r[n])}
+function invert(A){const n=A.length,I=A.map((r,i)=>r.map((_,j)=>i==j?1:0)),cols=[];
+for(let j=0;j<n;j++)cols.push(solveLinear(A,I.map(r=>r[j])));
+const inv=Array.from({length:n},()=>new Array(n));for(let i=0;i<n;i++)for(let j=0;j<n;j++)inv[i][j]=cols[j][i];return inv}
+function nls(x,y,m){
+ let p=m.init(x,y),n=x.length,k=p.length,lambda=1e-2;
+ function resid(pp){return x.map((xi,i)=>y[i]-m.fn(xi,pp))}
+ let r=resid(p),cost=r.reduce((s,v)=>s+v*v,0);
+ for(let it=0;it<150;it++){
+  const J=Array.from({length:n},()=>new Array(k).fill(0));
+  for(let j=0;j<k;j++){const dp=Math.max(1e-6,Math.abs(p[j])*1e-5);const p2=p.slice();p2[j]+=dp;const r2=resid(p2);
+   for(let i=0;i<n;i++)J[i][j]=-(r2[i]-r[i])/dp}
+  const JTJ=Array.from({length:k},()=>new Array(k).fill(0)),JTr=new Array(k).fill(0);
+  for(let a=0;a<k;a++){for(let b=0;b<k;b++){let s=0;for(let i=0;i<n;i++)s+=J[i][a]*J[i][b];JTJ[a][b]=s}let s=0;for(let i=0;i<n;i++)s+=J[i][a]*r[i];JTr[a]=s}
+  let accepted=false;
+  for(let t=0;t<8&&!accepted;t++){
+   const A=JTJ.map((row,i)=>row.map((v,j)=>i==j?v+lambda*(v||1):v));
+   let delta;try{delta=solveLinear(A,JTr)}catch(e){delta=null}
+   if(!delta||delta.some(v=>!Number.isFinite(v))){lambda*=3;continue}
+   const p2=p.map((v,i)=>v+delta[i]),r2=resid(p2),c2=r2.reduce((s,v)=>s+v*v,0);
+   if(Number.isFinite(c2)&&c2<cost){p=p2;r=r2;if(Math.abs(cost-c2)<1e-9*Math.max(1,cost)){cost=c2;accepted=true;it=1e9;break}cost=c2;lambda*=.6;accepted=true}
+   else lambda*=2.5}
+  if(!accepted)break}
+ const fit=x.map(xi=>m.fn(xi,p)),res=y.map((v,i)=>v-fit[i]),sse=res.reduce((s,v)=>s+v*v,0),sst=y.reduce((s,v)=>s+(v-mean(y))**2,0),s2=sse/Math.max(1,n-k);
+ const J=Array.from({length:n},()=>new Array(k).fill(0));
+ for(let j=0;j<k;j++){const dp=Math.max(1e-6,Math.abs(p[j])*1e-5);const p2=p.slice();p2[j]+=dp;const f2=x.map(xi=>m.fn(xi,p2));for(let i=0;i<n;i++)J[i][j]=(f2[i]-fit[i])/dp}
+ const JTJ=Array.from({length:k},()=>new Array(k).fill(0));for(let a=0;a<k;a++)for(let b=0;b<k;b++){let s=0;for(let i=0;i<n;i++)s+=J[i][a]*J[i][b];JTJ[a][b]=s}
+ let inv;try{inv=invert(JTJ)}catch(e){inv=JTJ.map((r,i)=>r.map((_,j)=>i==j?1:0))}
+ const se=inv.map((row,i)=>Math.sqrt(Math.max(0,s2*row[i])));
+ const h=J.map(row=>{let s=0;for(let a=0;a<k;a++)for(let b=0;b<k;b++)s+=row[a]*inv[a][b]*row[b];return Math.min(Math.max(s,0),0.999)});
+ const cook=res.map((rv,i)=>rv*rv/(k*s2)*h[i]/((1-h[i])**2));
+ const r2=1-sse/sst,adj=n-k-1>0?1-(1-r2)*(n-1)/(n-k-1):NaN,aic=n*Math.log(Math.max(sse/n,1e-12))+2*k,bic=n*Math.log(Math.max(sse/n,1e-12))+k*Math.log(n),rmse=Math.sqrt(sse/n);
+ const t=p.map((v,i)=>v/(se[i]||1e-9)),pval=t.map(tt=>2*(1-normCDF(Math.abs(tt))));
+ return{params:p,se,t,pval,fit,res,h,cook,r2,adj,aic,bic,rmse,n,k,sse}}
+function bp(fit,res){const n=fit.length,e2=res.map(r=>r*r),mx=mean(fit),my=mean(e2);let sxy=0,sxx=0;for(let i=0;i<n;i++){sxy+=(fit[i]-mx)*(e2[i]-my);sxx+=(fit[i]-mx)**2}
+const b1=sxy/(sxx||1e-9),b0=my-b1*mx,fit2=fit.map(v=>b0+b1*v),sse=e2.reduce((s,v,i)=>s+(v-fit2[i])**2,0),sst=e2.reduce((s,v)=>s+(v-my)**2,0),r2=1-sse/(sst||1e-9);
+const LM=n*r2,p=2*(1-normCDF(Math.sqrt(Math.max(LM,0))));return{p}}
+function skewness(a){const n=a.length,m=mean(a),sd=Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/n)||1e-9;return a.reduce((s,v)=>s+((v-m)/sd)**3,0)/n}
+function kfold(x,y,m,k,reps){let out=[];for(let rp=0;rp<reps;rp++){const idx=[...x.keys()];for(let i=idx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}
+const folds=Array.from({length:k},()=>[]);idx.forEach((v,i)=>folds[i%k].push(v));let se=0,cnt=0;
+folds.forEach(te=>{const tr=idx.filter(i=>!te.includes(i));if(tr.length<m.params.length+2)return;const xt=tr.map(i=>x[i]),yt=tr.map(i=>y[i]);
+try{const fitm=nls(xt,yt,m);te.forEach(i=>{const pr=m.fn(x[i],fitm.params);if(Number.isFinite(pr)){se+=(y[i]-pr)**2;cnt++}})}catch(e){}});
+if(cnt>0)out.push(Math.sqrt(se/cnt))}
+return out.length?mean(out):NaN}
+function stars(p){return p<.001?"***":p<.01?"**":p<.05?"*":""}
+function plot(svg,o){const W=640,H=+svg.getAttribute("viewBox").split(" ")[3],m={l:46,r:12,t:10,b:34};
+const sx=v=>m.l+(v-o.x0)/(o.x1-o.x0)*(W-m.l-m.r),sy=v=>H-m.b-(v-o.y0)/(o.y1-o.y0)*(H-m.t-m.b),n=o.ny||4;let s="";
+for(let i=0;i<=n;i++){const v=o.y0+(o.y1-o.y0)*i/n;s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${sy(v)}" y2="${sy(v)}" stroke="${cs("--line")}"/><text x="${m.l-6}" y="${sy(v)+4}" text-anchor="end">${f(v,o.yd??0)}</text>`}
+o.xt.forEach(([v,l])=>s+=`<text x="${sx(v)}" y="${H-m.b+16}" text-anchor="middle">${l}</text>`);
+s+=`<text x="${(W+m.l)/2}" y="${H-4}" text-anchor="middle">${o.xl}</text><text transform="translate(13 ${H/2}) rotate(-90)" text-anchor="middle">${o.yl}</text>`;
+(o.pts||[]).forEach(p=>{const px=sx(p[0]),py=sy(p[1]);if(px>=m.l-2&&px<=W-m.r+2&&py>=m.t-2&&py<=H-m.b+2)s+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="2.6" fill="${cs("--dot")}" opacity=".5"/>`});
+(o.lines||[]).forEach(l=>s+=`<polyline fill="none" stroke="${cs(l.c)}" stroke-width="2.3" ${l.d?'stroke-dasharray="6 4"':""} points="${l.p.filter(p=>Number.isFinite(p[1])).map(p=>sx(p[0]).toFixed(1)+","+sy(Math.max(o.y0,Math.min(o.y1,p[1]))).toFixed(1)).join(" ")}"/>`);
+(o.mk||[]).forEach(p=>s+=`<circle cx="${sx(p[0]).toFixed(1)}" cy="${sy(Math.max(o.y0,Math.min(o.y1,p[1]))).toFixed(1)}" r="5" fill="${cs(p[2])}" stroke="#fff" stroke-width="1.5"/>`);
+svg.innerHTML=s}
+function bar(svg,cats,vals,colors,fmt){const W=640,H=+svg.getAttribute("viewBox").split(" ")[3],m={l:150,r:44,t:10,b:10};
+const max=Math.max(...vals.filter(Number.isFinite),1e-9)*1.15,by=(H-m.t-m.b)/Math.max(1,cats.length),sx=v=>m.l+v/max*(W-m.l-m.r);let s="";
+cats.forEach((c,i)=>{const y=m.t+i*by+by*.2,h=by*.6,v=Number.isFinite(vals[i])?vals[i]:0;s+=`<text x="${m.l-8}" y="${y+h/2+4}" text-anchor="end">${c}</text><rect x="${m.l}" y="${y}" width="${Math.max(0,(sx(v)-m.l)).toFixed(1)}" height="${h}" rx="3" fill="${cs(colors[i])}"/><text x="${sx(v)+6}" y="${y+h/2+4}">${fmt(vals[i])}</text>`});
+svg.innerHTML=s}
+const kp=a=>a.map(([b,l])=>`<div class="kpi"><b>${b}</b><span>${l}</span></div>`).join("");
+function corr(a,b){const ma=mean(a),mb=mean(b);let sab=0,sa=0,sb=0;for(let i=0;i<a.length;i++){sab+=(a[i]-ma)*(b[i]-mb);sa+=(a[i]-ma)**2;sb+=(b[i]-mb)**2}return sab/Math.sqrt(sa*sb)}
+function xticks(x0,x1){const n=5,arr=[];for(let i=0;i<=n;i++){const v=x0+(x1-x0)*i/n;arr.push([v,f(v,Math.abs(v)<10?1:0)])}return arr}
+function renderTable(){const N=Math.min(X.length,30);let h="<tr><th>#</th><th>X</th><th>Y</th><th></th></tr>";
+for(let i=0;i<N;i++)h+=`<tr><td>${i+1}</td><td><input class="cell" type="number" step="any" data-i="${i}" data-f="x" value="${X[i]}"></td><td><input class="cell" type="number" step="any" data-i="${i}" data-f="y" value="${Yv[i]}"></td><td><button class="rowbtn" data-del="${i}">Hapus</button></td></tr>`;
+$("tpv").innerHTML=h;$("pv-note").textContent=X.length>30?`Menampilkan 30 dari ${X.length} baris untuk diedit langsung.`:`Semua ${X.length} baris ditampilkan — ubah sel apa pun.`;
+$("tpv").querySelectorAll("input.cell").forEach(inp=>inp.onchange=e=>{const i=+e.target.dataset.i,fld=e.target.dataset.f,v=+e.target.value;if(fld=="x")X[i]=v;else Yv[i]=v;onDataChange()});
+$("tpv").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{const i=+b.dataset.del;X.splice(i,1);Yv.splice(i,1);renderTable();onDataChange()})}
+$("addrow").onclick=()=>{X.push(median(X));Yv.push(Math.round(mean(Yv)*10)/10);renderTable();onDataChange()};
+$("dsSel").onchange=e=>{loadDS(e.target.value);renderTable();onDataChange()};
+$("reset").onclick=()=>{loadDS(DS);renderTable();onDataChange()};
+$("csv").onchange=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{
+const rows=r.result.split(/\r?\n/).map(l=>l.split(/[,;\t]/).map(s=>s.trim())).filter(r=>r.length>=2);
+const A=[],B=[];rows.forEach(r=>{const a=parseFloat(r[0]),b=parseFloat(r[1]);if(Number.isFinite(a)&&Number.isFinite(b)){A.push(a);B.push(b)}});
+if(A.length<5){$("warnmsg").style.display="block";$("warnmsg").textContent="CSV tidak valid atau kurang dari 5 baris numerik — data tidak diganti.";return}
+$("warnmsg").style.display="none";X=A;Yv=B;renderTable();onDataChange()};r.readAsText(file)};
+function onDataChange(){drawEDA();if(FIT_KEYS.length)fitModels()}
+function drawEDA(){$("k1").innerHTML=kp([[X.length.toLocaleString("id-ID"),"observasi termuat"],[f(Math.min(...X),1)+" – "+f(Math.max(...X),1),"rentang X"],[f(mean(Yv),1),"rata-rata Y"],[f(corr(X,Yv),2),"korelasi X,Y (linear)"]]);
+const x0=Math.min(0,Math.min(...X)*1.05),x1=Math.max(...X)*1.05,y0=Math.min(0,Math.min(...Yv)*1.08),y1=Math.max(...Yv)*1.12;
+plot($("c1"),{x0,x1,y0,y1,xt:xticks(x0,x1),xl:"X",yl:"Y",pts:X.map((v,i)=>[v,Yv[i]])})}
+let FIT_KEYS=["log"],FITS={};
+$("modelChecks").innerHTML=Object.entries(MODELS).map(([k,m])=>`<label class="chk"><input type="checkbox" value="${k}" ${FIT_KEYS.includes(k)?"checked":""}><b class="sw" style="background:${cs(m.color)}"></b>${m.label}</label>`).join("");
+$("modelChecks").querySelectorAll("input").forEach(cb=>cb.onchange=()=>{FIT_KEYS=[...$("modelChecks").querySelectorAll("input:checked")].map(c=>c.value);fitModels()});
+$("fitBtn").onclick=fitModels;
+function fitModels(){FITS={};let warn=[];
+FIT_KEYS.forEach(k=>{const m=MODELS[k];const domOk=m.domain(X,Yv);
+if(!domOk){warn.push(m.label+" dilewati (butuh X"+(k=="power"?" dan Y > 0)":" > 0)"));return}
+try{const r=nls(X,Yv,m);if(!r.params.every(Number.isFinite)||!Number.isFinite(r.rmse)){warn.push(m.label+" gagal konvergen");return}
+r.cv=kfold(X,Yv,m,5,6);FITS[k]=r}catch(e){warn.push(m.label+" gagal konvergen")}});
+$("warnmsg").style.display=warn.length?"block":"none";$("warnmsg").textContent=warn.join(" · ");
+renderModelPlot();renderDiagSelect();renderBenchmark();renderPrediction(true)}
+function curveFor(k,r){const x0=Math.min(...X),x1=Math.max(...X),n=140,pts=[];
+for(let i=0;i<n;i++){const x=x0+(x1-x0)*i/(n-1);pts.push([x,MODELS[k].fn(x,r.params)])}return pts}
+function renderModelPlot(){const x0=Math.min(0,Math.min(...X)*1.05),x1=Math.max(...X)*1.05;
+let ymin=Math.min(...Yv),ymax=Math.max(...Yv);Object.values(FITS).forEach(r=>r.fit.forEach(v=>{if(Number.isFinite(v)){ymin=Math.min(ymin,v);ymax=Math.max(ymax,v)}}));
+const y0=Math.min(0,ymin*1.08),y1=ymax*1.15;
+const lines=Object.entries(FITS).map(([k,r])=>({c:MODELS[k].color,p:curveFor(k,r)}));
+plot($("c2"),{x0,x1,y0,y1,xt:xticks(x0,x1),xl:"X",yl:"Y",pts:X.map((v,i)=>[v,Yv[i]]),lines});
+$("legend2").innerHTML=Object.keys(FITS).map(k=>`<span><i style="background:${cs(MODELS[k].color)}"></i>${MODELS[k].label}</span>`).join("")||'<span class="note">Belum ada model dicocokkan.</span>'}
+function renderDiagSelect(){const sel=$("diagSel"),cur=sel.value;sel.innerHTML=Object.keys(FITS).map(k=>`<option value="${k}">${MODELS[k].label}</option>`).join("");
+if(Object.keys(FITS).includes(cur))sel.value=cur;renderDiag()}
+$("diagSel").onchange=renderDiag;
+function renderDiag(){const k=$("diagSel").value,r=FITS[k];if(!r){$("tb2").innerHTML="";$("tb3").innerHTML="";$("c3").innerHTML="";$("res-note").textContent="Belum ada model dicocokkan.";return}
+const m=MODELS[k];$("tb2").innerHTML="<tr><th>Parameter</th><th>Estimasi</th><th>SE</th><th>t</th><th>Sig.</th></tr>"+
+m.params.map((nm,i)=>`<tr><td>${nm}</td><td>${f(r.params[i],4)}</td><td>${f(r.se[i],4)}</td><td>${f(r.t[i],2)}</td><td>${stars(r.pval[i])}</td></tr>`).join("");
+$("res-note").textContent=`Model ${m.label}, n = ${r.n}. *** p<0,001, ** p<0,01, * p<0,05 (pendekatan asimtotik).`;
+const fmin=Math.min(...r.fit),fmax=Math.max(...r.fit),rmin=Math.min(...r.res),rmax=Math.max(...r.res);
+plot($("c3"),{x0:fmin-.05*(fmax-fmin||1),x1:fmax+.05*(fmax-fmin||1),y0:rmin*1.15,y1:rmax*1.15,ny:6,xt:xticks(fmin,fmax),xl:"Nilai prediksi",yl:"Residual",pts:r.fit.map((v,i)=>[v,r.res[i]]),lines:[{c:m.color,p:[[fmin,0],[fmax,0]]}]});
+const B=bp(r.fit,r.res),cookThr=4/r.n,nAbove=r.cook.filter(c=>c>cookThr).length,maxCook=Math.max(...r.cook);
+$("tb3").innerHTML="<tr><th>Uji</th><th>Hasil</th></tr>"+[
+["Breusch–Pagan (heteroskedastisitas)","p = "+f(B.p,4)],
+["Skewness residual",f(skewness(r.res),2)],
+["Cook's D maksimum",f(maxCook,3)],
+["Amatan Cook's D > 4/n",nAbove+" dari "+r.n],
+["Leverage maksimum",f(Math.max(...r.h),4)],
+["Jumlah parameter",r.k]].map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join("")}
+function renderBenchmark(){const rows=Object.entries(FITS).map(([k,r])=>[MODELS[k].label,r.r2,r.adj,r.aic,r.bic,r.rmse,r.cv,MODELS[k].color]).sort((a,b)=>b[1]-a[1]);
+$("tb4").innerHTML="<tr><th>Model</th><th>R²</th><th>R² adj.</th><th>AIC</th><th>BIC</th><th>RMSE latih</th><th>RMSE uji (5-fold CV)</th></tr>"+
+rows.map((r,i)=>`<tr class="${i==0?'best':''}"><td>${r[0]}</td><td>${f(r[1],3)}</td><td>${f(r[2],3)}</td><td>${f(r[3],1)}</td><td>${f(r[4],1)}</td><td>${f(r[5],2)}</td><td>${f(r[6],2)}</td></tr>`).join("")||"<tr><td colspan=7 class='note'>Belum ada model dicocokkan.</td></tr>";
+bar($("c4"),rows.map(r=>r[0]),rows.map(r=>r[1]),rows.map(r=>r[7]),v=>f(v,3))}
+function renderPrediction(resetRange){const ks=Object.keys(FITS);
+if(resetRange){const x0=Math.min(...X),x1=Math.max(...X);$("xrange").min=x0;$("xrange").max=x1;$("xrange").step=(x1-x0)/200||1;$("xrange").value=median(X);$("xnum").value=median(X)}
+const x=+$("xnum").value;
+let ymin=Math.min(...Yv),ymax=Math.max(...Yv);Object.values(FITS).forEach(r=>r.fit.forEach(v=>Number.isFinite(v)&&(ymin=Math.min(ymin,v),ymax=Math.max(ymax,v))));
+const x0=Math.min(0,Math.min(...X)*1.05),x1=Math.max(...X)*1.05,y0=Math.min(0,ymin*1.08),y1=ymax*1.15;
+const lines=ks.map(k=>({c:MODELS[k].color,p:curveFor(k,FITS[k])}));
+const mk=ks.map(k=>[x,MODELS[k].fn(x,FITS[k].params),MODELS[k].color]);
+plot($("c6"),{x0,x1,y0,y1,xt:xticks(x0,x1),xl:"X",yl:"Y",pts:X.map((v,i)=>[v,Yv[i]]),lines,mk});
+$("legend6").innerHTML=ks.map(k=>`<span><i style="background:${cs(MODELS[k].color)}"></i>${MODELS[k].label}</span>`).join("")||'<span class="note">Belum ada model dicocokkan.</span>';
+$("tbpred").innerHTML="<tr><th>Model</th><th>Prediksi Y pada X="+f(x,2)+"</th></tr>"+ks.map(k=>`<tr><td>${MODELS[k].label}</td><td>${f(MODELS[k].fn(x,FITS[k].params),2)}</td></tr>`).join("")||"<tr><td class='note'>Belum ada model dicocokkan.</td></tr>"}
+$("xrange").oninput=()=>{$("xnum").value=(+$("xrange").value).toFixed(2);renderPrediction(false)};
+$("xnum").oninput=()=>{renderPrediction(false)};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x==b));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==b.dataset.t))});
+matchMedia("(prefers-color-scheme:dark)").addEventListener("change",()=>{drawEDA();renderModelPlot();renderDiag();renderBenchmark();renderPrediction(false)});
+renderTable();drawEDA();fitModels();
+</script></body></html>
